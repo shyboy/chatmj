@@ -186,7 +186,10 @@ export default {
     "micWhisper": "Whisper語音識別",
     "micAsr": "即時識別",
     "micRec": "開始錄音，請說話！2秒內無聲音將自動關閉",
-    "micRecEnd": "錄音已結束"
+    "micRecEnd": "錄音已結束",
+    subtle: '高清2倍'
+    ,creative: '高清2倍. 創意'
+    ,gpt_gx: 'GPTs 用 g-*'
   },
   "mjset": {
     "server": "服務端",
@@ -272,7 +275,12 @@ export default {
     "no2add": "請勿重複添加圖片",
     "add2more": "請添加兩張以上圖片",
     "no1m": "圖片大小不能超過1M",
-    "imgExt": "圖片僅支持jpg,gif,png,jpeg格式"
+    "imgExt": "圖片僅支持jpg,gif,png,jpeg格式",
+    "setSync": "同步Midjourney和Suno",
+    "addGPTS": "新增 GPTs",
+    "addPlaceholder": "將 GPTs 的 gid 貼這裡 也可直接貼 GPTs 的鏈接",
+    "gidError": "未找到有效的 gid，请重新填寫",
+    "success3": "新增 GPTs 成功！"
   },
 	draw: {
 		qualityList: {
@@ -361,4 +369,57 @@ export default {
 			landscape: "風景 (3:2)",
 		},
 	}
+  ,suno:{
+    "description": "描述模式",
+    "custom": "專業模式",
+    "style": "歌曲風格",
+    "stylepls": "歌曲名稱，例如：流行音樂",
+    "emputy": "暫無內容",
+    "noly": "無歌詞",
+    "inputly": "請輸入歌曲名稱或歌詞",
+    "doingly": "正在進行中，請稍候。",
+    "doingly2": "正在獲取歌詞...",
+    "title": "歌曲名稱",
+    "titlepls": "歌曲名稱，例如：假期",
+    "desc": "歌曲描述",
+    "descpls": "歌曲描述，例如：關於假期的原聲流行音樂",
+    "noneedly": "無需歌詞",
+    "rank": "隨機獲取",
+    "ly": "歌詞",
+    "lypls": "歌詞：有一定的格式",
+    "generate": "創作歌曲",
+    "generately": "生成歌詞",
+    "nodata": "請先創作才有歌曲列表",
+
+    "menu": "音樂",
+    "menuinfo": "Suno 音樂創作",
+    "server": "Suno API 端點",
+    "serverabout": "Suno 相關",
+    "setOpenKeyPlaceholder": "Suno API 的相關KEY；可不填",
+
+    upMps: '上載音頻',
+    extend: '擴展',
+    extendFrom: '擴展自',
+    extendAt: '擴展始於',
+    fail: '失敗',
+    info: '說明：<br>上載音頻的持續時間必須在6秒到60秒之間'
+
+   }
+   ,video:{
+    "menu": "視頻",
+    "menuinfo": "Luma及其他視頻創作",
+    "descpls": "視頻創作描述",
+    "lumaabout": "關於Luma",
+    "lumaserver": "Luma API端點",
+    "setOpenKeyPlaceholder": "Luma API金鑰，選填",
+    "generate": "生成視頻",
+    "nodata": "暫無可用視頻，請先生成！",
+    "selectimg": "選擇圖片",
+    "clear": "清除",
+    "plsInput": "請輸入內容！",
+    "submitSuccess": "提交成功！",
+    "process": "視頻生成中...",
+    "repeat": "重新獲取"
+  }
+
 }

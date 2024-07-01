@@ -4,6 +4,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
 import mjlayout from '@/views/mj/layout.vue'
+import sunoLayout from '@/views/suno/layout.vue'
+import lumaLayout from '@/views/luma/layout.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -77,13 +79,29 @@ const routes: RouteRecordRaw[] = [
     {
     path: '/music',
     name: 'music',
-    component: mjlayout,
+    component: sunoLayout,
     redirect: '/music/index',
     children: [
       {
         path: '/music/:uuid?',
         name: 'music',
         component: () => import('@/views/suno/music.vue'),
+      },
+    ],
+
+    
+
+  },
+   {
+    path: '/video',
+    name: 'video',
+    component: lumaLayout,
+    redirect: '/video/index',
+    children: [
+      {
+        path: '/video/:uuid?',
+        name: 'video',
+        component: () => import('@/views/luma/video.vue'),
       },
     ],
   },

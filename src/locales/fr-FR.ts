@@ -188,7 +188,11 @@ export default {
         "micWhisper": "Reconnaissance vocale chuchotement",
         "micAsr": "Reconnaissance instantanée",
         "micRec": "Commencer l'enregistrement, s'il vous plaît parlez ! Il s'arrêtera automatiquement s'il n'y a pas de son pendant 2 secondes.",
-        "micRecEnd": "L'enregistrement est terminé"
+        "micRecEnd": "L'enregistrement est terminé",
+
+        subtle: 'Haute définition 2x'
+        ,creative: 'Haute définition 2x. Créatif'
+        ,gpt_gx: 'Les GPT utilisent g-*'
 
     },
     "mjset": {
@@ -277,7 +281,12 @@ export default {
         "no2add": "Ne pas ajouter d'images en double",
         "add2more": "Veuillez ajouter deux images ou plus",
         "no1m": "La taille de l'image ne peut pas dépasser 1 Mo",
-        "imgExt": "Les images ne supportent que les formats jpg, gif, png, jpeg"
+        "imgExt": "Les images ne supportent que les formats jpg, gif, png, jpeg",
+        "setSync": "Synchroniser Midjourney et Suno",
+        "addGPTS": "Ajouter des GPTs",
+        "addPlaceholder": "Collez le GID des GPTs ici ou collez directement le lien des GPTs",
+        "gidError": "GID valide introuvable, veuillez remplir à nouveau",
+        "success3": "GPTs ajoutés avec succès !"
     },
 	draw: {
 		qualityList: {
@@ -366,4 +375,57 @@ export default {
 			landscape: "Landscape (3:2)",
 		},
 	}
+  ,suno:{
+    "description": "Mode de description",
+    "custom": "Mode professionnel",
+    "style": "Style de chanson",
+    "stylepls": "Nom de la chanson, par exemple : Musique pop",
+    "emputy": "Aucun contenu disponible",
+    "noly": "Pas de paroles disponibles",
+    "inputly": "Veuillez saisir le nom de la chanson ou les paroles",
+    "doingly": "En cours, veuillez patienter.",
+    "doingly2": "Récupération des paroles...",
+    "title": "Nom de la chanson",
+    "titlepls": "Nom de la chanson, par exemple : Vacances",
+    "desc": "Description de la chanson",
+    "descpls": "Description de la chanson, par exemple : Musique pop originale sur les vacances",
+    "noneedly": "Pas besoin de paroles",
+    "rank": "Sélection aléatoire",
+    "ly": "Paroles",
+    "lypls": "Paroles : avec un certain format",
+    "generate": "Composer une chanson",
+    "generately": "Générer des paroles",
+    "nodata": "Veuillez composer d'abord pour obtenir une liste de chansons",
+
+    "menu": "Musique",
+    "menuinfo": "Création musicale Suno",
+    "server": "Point de terminaison de l'API Suno",
+    "serverabout": "Lié à Suno",
+    "setOpenKeyPlaceholder": "Clé associée pour l'API Suno ; facultatif",
+
+    upMps: 'Télécharger l\'audio',
+    extend: 'Étendre',
+    extendFrom: 'Étendre depuis',
+    extendAt: 'Commencer l\'extension à',
+    fail: 'Échec',
+    info: 'Instructions :<br>La durée de l\'audio téléchargé doit être comprise entre 6s et 60s'
+
+   }
+   ,video:{
+    "menu": "Vidéos",
+    "menuinfo": "Création de vidéos Luma et autres",
+    "descpls": "Description de création de vidéos",
+    "lumaabout": "À propos de Luma",
+    "lumaserver": "Adresse de l'API Luma",
+    "setOpenKeyPlaceholder": "Clé API Luma, facultatif",
+    "generate": "Générer la vidéo",
+    "nodata": "Aucune vidéo disponible, veuillez d'abord générer !",
+    "selectimg": "Sélectionner une image",
+    "clear": "Effacer",
+    "plsInput": "Veuillez saisir du contenu !",
+    "submitSuccess": "Soumis avec succès !",
+    "process": "Génération de la vidéo...",
+    "repeat": "Réessayer"
+    }
+
   }
