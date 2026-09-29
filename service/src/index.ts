@@ -2,7 +2,7 @@ import express from 'express'
 import type { RequestProps } from './types'
 import type { ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
-import { auth, authV2, regCookie, turnstileCheck, verify } from './middleware/auth'
+import { auth, authV2, mlog, regCookie, turnstileCheck, verify } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString,formattedDate } from './utils/is'
 import multer from "multer"
@@ -17,6 +17,7 @@ import FormData  from 'form-data'
 import axios from 'axios';
 import AWS  from 'aws-sdk';
 import { v4 as uuidv4} from 'uuid';
+import { viggleProxyFileDo,viggleProxy, lumaProxy, runwayProxy, ideoProxy, ideoProxyFileDo, klingProxy, pikaProxy, udioProxy, runwaymlProxy, pixverseProxy, sunoProxy, GptImageEdit } from './myfun'
 
 
 const app = express()
@@ -91,17 +92,26 @@ router.post('/session', async (req, res) => {
     const disableGpt4 = process.env.DISABLE_GPT4?? "" ;
     const isUploadR2 = isNotEmptyString(process.env.R2_DOMAIN);
     const isWsrv =  process.env.MJ_IMG_WSRV?? "" 
-    const uploadImgSize =  process.env.UPLOAD_IMG_SIZE?? "1" 
+    const uploadImgSize =  process.env.UPLOAD_IMG_SIZE?? "5" 
     const gptUrl = process.env.GPT_URL?? ""; 
     const theme = process.env.SYS_THEME?? "dark"; 
     const isCloseMdPreview = process.env.CLOSE_MD_PREVIEW?true:false
     const uploadType= process.env.UPLOAD_TYPE
     const turnstile= process.env.TURNSTILE_SITE
+    const menuDisable= process.env.MENU_DISABLE??""
+    const visionModel= process.env.VISION_MODEL??""
+    const systemMessage= process.env.SYSTEM_MESSAGE??""
+    const customVisionModel= process.env.CUSTOM_VISION_MODELS??""
+    const backgroundImage = process.env.BACKGROUND_IMAGE ?? ""
+    let  isHk= (process.env.OPENAI_API_BASE_URL??"").toLocaleLowerCase().indexOf('-hk')>0
+    if(!isHk)  isHk= (process.env.LUMA_SERVER??"").toLocaleLowerCase().indexOf('-hk')>0
+    if(!isHk)  isHk= (process.env.VIGGLE_SERVER??"").toLocaleLowerCase().indexOf('-hk')>0
+    
 
     const data= { disableGpt4,isWsrv,uploadImgSize,theme,isCloseMdPreview,uploadType,
       notify , baiduId, googleId,isHideServer,isUpload, auth: hasAuth
       , model: currentModel(),amodel,isApiGallery,cmodels,isUploadR2,gptUrl
-      ,turnstile
+      ,turnstile,menuDisable,visionModel,systemMessage,customVisionModel,backgroundImage,isHk
     }
     res.send({  status: 'Success', message: '', data})
   }
@@ -123,7 +133,7 @@ app.use('/mjapi',authV2 , proxy(process.env.MJ_SERVER?process.env.MJ_SERVER:'htt
     return req.originalUrl.replace('/mjapi', '') // 将URL中的 `/mjapi` 替换为空字符串
   },
   proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
-    proxyReqOpts.headers['mj-api-secret'] = process.env.MJ_API_SECRET;
+    if(  process.env.MJ_API_SECRET ) proxyReqOpts.headers['mj-api-secret'] = process.env.MJ_API_SECRET;
     proxyReqOpts.headers['Content-Type'] = 'application/json';
     proxyReqOpts.headers['Mj-Version'] = pkg.version;
     return proxyReqOpts;
@@ -290,7 +300,8 @@ app.use(
   }
 );
 
- 
+//代理图片编辑
+app.use('/openapi/v1/images/edits',authV2,upload2.any() , GptImageEdit )
 
 //代理openai 接口
 app.use('/openapi' ,authV2, turnstileCheck, proxy(API_BASE_URL, {
@@ -306,6 +317,80 @@ app.use('/openapi' ,authV2, turnstileCheck, proxy(API_BASE_URL, {
   },
   //limit: '10mb'
 }));
+
+//代理sunoApi 接口 
+app.use('/sunoapi' ,authV2,sunoProxy );
+app.use('/suno' ,authV2,sunoProxy );
+
+
+
+//代理luma 接口 
+app.use('/luma' ,authV2, lumaProxy  );
+app.use('/pro/luma' ,authV2, lumaProxy );
+
+//代理 viggle 文件
+app.use('/viggle/asset',authV2 ,  upload2.single('file'), viggleProxyFileDo );
+app.use('/pro/viggle/asset',authV2 ,  upload2.single('file'), viggleProxyFileDo );
+//代理 viggle  
+app.use('/viggle' ,authV2, viggleProxy);
+app.use('/pro/viggle' ,authV2, viggleProxy);
+
+app.use('/runwayml' ,authV2, runwaymlProxy  );
+app.use('/runway' ,authV2, runwayProxy  );
+app.use('/kling' ,authV2, klingProxy  );
+
+app.use('/ideogram/remix' ,authV2,  upload2.single('image_file'), ideoProxyFileDo  );
+app.use('/ideogram' ,authV2, ideoProxy  );
+app.use('/pika' ,authV2, pikaProxy  );
+app.use('/udio' ,authV2, udioProxy  );
+
+app.use('/pixverse' ,authV2, pixverseProxy  );
+
+// WebDAV 代理接口
+router.post('/webdav-proxy', authV2, async (req, res) => {
+  try {
+    const { url, method, username, password, data } = req.body
+    
+    if (!url || !method || !username || !password) {
+      return res.status(400).json({ error: '缺少必要参数' })
+    }
+    
+    const auth = Buffer.from(`${username}:${password}`).toString('base64')
+    const headers: any = {
+      'Authorization': `Basic ${auth}`,
+    }
+    
+    if (method === 'PUT') {
+      headers['Content-Type'] = 'application/json'
+    }
+    
+    const axiosConfig: any = {
+      method,
+      url,
+      headers,
+      timeout: 30000,
+    }
+    
+    if (method === 'PUT' && data) {
+      axiosConfig.data = data
+    }
+    
+    const response = await axios(axiosConfig)
+    res.json({ 
+      success: true, 
+      status: response.status,
+      data: response.data 
+    })
+  }
+  catch (error: any) {
+    res.status(error.response?.status || 500).json({ 
+      success: false,
+      error: error.message,
+      status: error.response?.status
+    })
+  }
+})
+
 
 
 app.use('', router)

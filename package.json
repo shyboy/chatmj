@@ -1,6 +1,6 @@
 {
   "name": "chatgpt-web-midjourney-proxy",
-  "version": "2.16.7",
+  "version": "2.26.8",
   "private": false,
   "description": "ChatGPT Web Midjourney Proxy",
   "author": "Dooy <ydlhero@gmail.com>",
@@ -29,6 +29,8 @@
     "common:prepare": "husky install"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "@traptitech/markdown-it-katex": "^3.6.0",
     "@vueuse/core": "^9.13.0",
     "eventsource-parser": "^1.1.1",
@@ -53,6 +55,9 @@
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
     "@iconify/vue": "^4.1.0",
+    "@openai/realtime-api-beta": "github:dooy/openai-realtime-api-beta",
+    "@openai/realtime-wavtools": "github:dooy/openai-realtime-wavtools",
+    "@tauri-apps/cli": "^1.5.11",
     "@types/crypto-js": "^4.1.1",
     "@types/katex": "^0.16.0",
     "@types/markdown-it": "^12.2.3",
@@ -77,6 +82,9 @@
     "vite-plugin-pwa": "^0.14.4",
     "vite-plugin-static-copy": "^0.17.0",
     "vue-tsc": "^1.2.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "vue-demi"]
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [

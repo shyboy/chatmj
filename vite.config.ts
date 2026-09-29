@@ -55,12 +55,32 @@ export default defineConfig((env) => {
           changeOrigin: true, // 允许跨域
           //rewrite: path => path.replace('/api/', '/'),
         },
+         '/sunoapi': {
+          target: viteEnv.VITE_APP_API_BASE_URL,
+          changeOrigin: true, // 允许跨域  
+        },
          '/uploads': {
           target: viteEnv.VITE_APP_API_BASE_URL,
           changeOrigin: true, // 允许跨域
           //rewrite: path => path.replace('/api/', '/'),
         }, 
         '/openapi': {
+          target: viteEnv.VITE_APP_API_BASE_URL,
+          changeOrigin: true, // 允许跨域
+          //rewrite: path => path.replace('/api/', '/'),
+        },
+        '/luma': {
+          target: viteEnv.VITE_APP_API_BASE_URL,
+          changeOrigin: true, // 允许跨域
+          //rewrite: path => path.replace('/api/', '/'),
+        }, 
+        //
+        '/viggle': {
+          target: viteEnv.VITE_APP_API_BASE_URL,
+          changeOrigin: true, // 允许跨域
+          //rewrite: path => path.replace('/api/', '/'),
+        },
+         '/runwayml': {
           target: viteEnv.VITE_APP_API_BASE_URL,
           changeOrigin: true, // 允许跨域
           //rewrite: path => path.replace('/api/', '/'),

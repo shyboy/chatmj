@@ -8,7 +8,7 @@ import { useChat } from '../chat/hooks/useChat'
 import { useUsingContext } from '../chat/hooks/useUsingContext' 
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { homeStore, useChatStore, usePromptStore } from '@/store'
-import {   mlog,subTask,localSaveAny, subGPT } from '@/api'
+import {   mlog,subTask,localSaveAny, subGPT, isDallImageModel } from '@/api'
 import { t } from '@/locales'
 
 let controller = new AbortController()
@@ -79,6 +79,20 @@ async function onConversation() {
      addChat(  +uuid, promptMsg );
      //return ;
 
+   
+  }else if( message.action && (message.action=='mj.edit.video'||  message.action=='mj.edit.image') ){ //'视频，图片编辑'
+   const  str=message.action=='mj.edit.image'?t('mj.editImage'):t('mj.editVideo')
+   let promptMsg: Chat.Chat= getInitChat(str+":\n"+message.data.prompt+"\n\n" );
+   try{
+          //let images= await localSaveAny( JSON.stringify( message.data.image )  ) ;
+          let images= await localSaveAny( JSON.stringify( {fileName:["a.jpg"], fileBase64:[ message.data.image ]} )  ) ;
+          mlog('mj.edit.video key', images );
+          promptMsg.opt= {images:[images]}
+     }catch(e){
+         mlog('mj.edit.video localSaveAny error ',e);
+     }
+     addChat(  +uuid, promptMsg );
+
   }else if( message.action && message.action=='blend' ){
      // promptMsg.opt={  images: message.fileBase64 }
      let promptMsg: Chat.Chat= getInitChat(t('mjchat.blend') );//'混图'
@@ -94,6 +108,17 @@ async function onConversation() {
     
   }else if( message.action && ['gpt.dall-e-3','shorten'].indexOf(message.action) >-1   ){ //gpt.dall-e-3 //subTas
     let promptMsg: Chat.Chat= getInitChat( message.data.prompt ); 
+    mlog( 'gpt.dall-e-3' ,  message.data.fileBase64 );
+    if(  message.data.fileBase64 &&  message.data.fileBase64.length>0 ){
+       // promptMsg.opt={  images: message.fileBase64 }
+       try{
+            let images= await localSaveAny( JSON.stringify(  {fileName:["a.jpg"], fileBase64:[ message.data.fileBase64]} )  ) ;
+            mlog('key', images );
+            promptMsg.opt= {images:[images]}
+       }catch(e){
+           mlog('localSaveAny error',e);
+       }
+    }
      addChat(  +uuid, promptMsg );
   }else if( message.drawText){
     let promptMsg: Chat.Chat= getInitChat(message.drawText)
@@ -101,7 +126,7 @@ async function onConversation() {
     if( message.fileBase64 && message.fileBase64.length>0 ){
        // promptMsg.opt={  images: message.fileBase64 }
        try{
-            let images= await localSaveAny( JSON.stringify( message.fileBase64)  ) ;
+            let images= await localSaveAny( JSON.stringify(  {fileName:["a.jpg"], fileBase64:[ message.data.fileBase64]} )  ) ;
             mlog('key', images );
             promptMsg.opt= {images:[images]}
        }catch(e){
@@ -221,7 +246,7 @@ watch(()=>homeStore.myData.act,(n)=>{
                //homeStore.setMyData{{act}}
                homeStore.setMyData({act:'mjReload', actData:{mjID:dchat.mjID,noShow:true} })
                toBottom();
-            }else if(  (dchat.model=='dall-e-2' || dchat.model=='dall-e-3')   && dchat.opt?.imageUrl ){
+            }else if(  dchat.model && ( isDallImageModel(dchat.model) )   && dchat.opt?.imageUrl ){
                 homeStore.setMyData({act:'dallReload', actData:{myid:dchat.myid,noShow:true} });
                 toBottom();
             }

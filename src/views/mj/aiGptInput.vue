@@ -6,7 +6,7 @@ import { NInput ,NButton,useMessage,NImage,NTooltip, NAutoComplete,NTag
 ,NPopover,NModal, NDropdown  } from 'naive-ui'
 import { SvgIcon } from '@/components/common';
 import { canVisionModel, GptUploader, mlog, upImg,getFileFromClipboard,isFileMp3
-    ,countTokens, checkDisableGpt4, Recognition, regCookie } from '@/api';
+    ,countTokens, checkDisableGpt4, Recognition, regCookie,isCanBase64Model } from '@/api';
 import { gptConfigStore, homeStore,useChatStore } from '@/store';
 import { AutoCompleteOptions } from 'naive-ui/es/auto-complete/src/interface';
 import { RenderLabel } from 'naive-ui/es/_internal/select-menu/src/interface';
@@ -24,7 +24,7 @@ const chatStore = useChatStore()
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{ modelValue:string,disabled?:boolean,searchOptions?:AutoCompleteOptions,renderOption?: RenderLabel }>();
 const fsRef = ref()
-const st = ref<{fileBase64:string[],isLoad:number,isShow:boolean,showMic:boolean,micStart:boolean}>({fileBase64:[],isLoad:0
+const st = ref<{fileBase64:string[],fileName:string[],isLoad:number,isShow:boolean,showMic:boolean,micStart:boolean}>({fileBase64:[],fileName:[],isLoad:0
     ,isShow:false,showMic:false , micStart:false})
 const { isMobile } = useBasicLayout()
 const placeholder = computed(() => {
@@ -50,11 +50,13 @@ const handleSubmit = ( ) => {
     }
     let obj={
         prompt: mvalue.value,
-        fileBase64:st.value.fileBase64
+        fileBase64:st.value.fileBase64,
+        fileName:st.value.fileName
     }
     homeStore.setMyData({act:'gpt.submit', actData:obj });
     mvalue.value='';
     st.value.fileBase64=[];
+    st.value.fileName=[];
     return false;
 }
 const ms= useMessage();
@@ -102,6 +104,7 @@ funt();
                     return ;
                 }
                 st.value.fileBase64.push(d)  
+                st.value.fileName.push(file.name)
             } ).catch(e=>ms.error(e));
         }
     }else{
@@ -117,8 +120,10 @@ funt();
                 ms.info(t('mj.uploadSuccess'));
                 if(r.url.indexOf('http')>-1) {
                     st.value.fileBase64.push(r.url)
+                    st.value.fileName.push(file.name)
                 }else{
                     st.value.fileBase64.push(location.origin +r.url)
+                    st.value.fileName.push(file.name)
                 }
             }else if(r.error) ms.error(r.error);
         }).catch(e=>{
@@ -228,7 +233,7 @@ watch(()=> homeStore.myData.vtoken ,  regCookie  )
 </script>
 <template>
 <vue-turnstile ref="tRef"  :site-key="homeStore.myData.session.turnstile" :appearance="appearance"    v-model="homeStore.myData.vtoken" v-if="homeStore.myData.session.turnstile" />
-<!-- <div>{{ homeStore.myData.vtoken }}</div> -->
+<!-- <div>{{ homeStore.myData.vtoken }}</div> --> 
 <div v-if="st.showMic" class="  myinputs flex justify-center items-center" >
     <AiMic @cancel="st.showMic=false" @send="sendMic" />
 </div>
@@ -284,11 +289,11 @@ watch(()=> homeStore.myData.vtoken ,  regCookie  )
                     <SvgIcon icon="line-md:uploading-loop" class="absolute bottom-[10px] left-[8px] cursor-pointer" v-if="st.isLoad==1"></SvgIcon>
                     <SvgIcon icon="ri:attachment-line" class="absolute bottom-[10px] left-[8px] cursor-pointer" @click="fsRef.click()" v-else></SvgIcon>
                     </template>
-                    <div v-if="canVisionModel(gptConfigStore.myData.model)" v-html="$t('mj.upPdf')">
+                    <div v-if="canVisionModel(gptConfigStore.myData.model)" v-html="$t('mj.upPdf')" >
                         
                     </div>
-                    <div v-else v-html="$t('mj.upImg')"> 
-                    </div>
+                    <div v-else-if="isCanBase64Model(gptConfigStore.myData.model)" v-html="$t('mj.upImg2')"></div>
+                    <div v-else v-html="$t('mj.upImg')"> </div>
                     </n-tooltip>
                 </div>
                 <!-- <div  class=" relative; w-[22px]">

@@ -5,12 +5,17 @@ import { ss } from '@/utils/storage'
 export const homeStore = reactive({
     myData:{
         act:'',//动作
+        act2:'',//动作
         actData:{} //动作类别 
         ,local:'' //当前所处的版本
         ,session:{} as any
         ,isLoader:false
         ,vtoken:'' //turnstile token
         ,ctoken:'' //cookie
+        ,isClient: typeof window !== 'undefined' && window.__TAURI__
+        ,ms:{} as any
+        ,is_luma_pro:false
+        ,is_viggle_pro:false
        
     }
     
@@ -21,6 +26,12 @@ export const homeStore = reactive({
                 this.myData.act=''
                 this.myData.actData=''
             }, 2000 );
+        }
+        if( Object.keys(v).indexOf('act2')>-1){ 
+            setTimeout(()=> {
+                this.myData.act2=''
+                this.myData.actData=''
+            }, 500 );
         }
     }
  
@@ -39,6 +50,7 @@ export interface gptConfigType{
     frequency_penalty?:number
     presence_penalty?:number
     tts_voice?:string //TTS 人物
+    forbidden_stream?:boolean //禁用stream
 }
 const getGptInt= ():gptConfigType =>{
     let v:gptConfigType=getDefault();
@@ -89,18 +101,81 @@ export interface gptServerType{
     MJ_API_SECRET:string
     UPLOADER_URL:string
     MJ_CDN_WSRV?:boolean //wsrv.nl
+    SUNO_SERVER:string
+    SUNO_KEY:string
+    LUMA_SERVER:string
+    LUMA_KEY:string
+    VIGGLE_SERVER:string
+    VIGGLE_KEY:string
+    RUNWAY_SERVER:string
+    RUNWAY_KEY:string
+    IDEO_SERVER:string
+    IDEO_KEY:string
+    KLING_SERVER:string
+    KLING_KEY:string
+    SEEDANCE_SERVER:string
+    SEEDANCE_KEY:string
+    MINIMAX_SERVER:string
+    MINIMAX_KEY:string
+    PIKA_SERVER:string
+    PIKA_KEY:string
+    UDIO_SERVER:string
+    UDIO_KEY:string
+    PIXVERSE_SERVER:string
+    PIXVERSE_KEY:string
+    RIFF_SERVER:string
+    RIFF_KEY:string
+    IS_SET_SYNC?:boolean
+    GPTS_GX?:boolean
+    IS_LUMA_PRO?:boolean
+    RRUNWAY_VERSION?:string
+    DRAW_TYPE?:string
+    IS_VIGGLE_PRO?:boolean
+    TAB_VIDEO?:string
+    TTS_VOICE?:string
+    REALTIME_SYSMSG?:string
+    REALTIME_MODEL?:string
+    REALTIME_IS_WHISPER?:boolean 
+    TAB_MUSIC?:string
 
 }
 
 const  getServerDefault=()=>{
 let v:gptServerType={
-        OPENAI_API_KEY:'',
-        OPENAI_API_BASE_URL:'',
-        MJ_SERVER:'',
-        UPLOADER_URL:'',
-        MJ_API_SECRET:'',
-        MJ_CDN_WSRV:false
-    }
+    OPENAI_API_KEY: '',
+    OPENAI_API_BASE_URL: '',
+    MJ_SERVER: '',
+    UPLOADER_URL: '',
+    MJ_API_SECRET: '',
+    SUNO_KEY: '',
+    SUNO_SERVER: '',
+    MJ_CDN_WSRV: false,
+    IS_SET_SYNC: true,
+    LUMA_SERVER: '',
+    LUMA_KEY: '',
+    VIGGLE_SERVER: '',
+    VIGGLE_KEY: '',
+    TAB_VIDEO: 'all',
+    RUNWAY_SERVER: '',
+    RUNWAY_KEY: '',
+    IDEO_SERVER: '',
+    IDEO_KEY: '',
+    KLING_SERVER: '',
+    KLING_KEY: '',
+    PIKA_SERVER: '',
+    PIKA_KEY: '',
+    TTS_VOICE: 'alloy',
+    UDIO_SERVER: '',
+    UDIO_KEY: '',
+    PIXVERSE_SERVER: '',
+    PIXVERSE_KEY: '',
+    SEEDANCE_KEY: '',
+    SEEDANCE_SERVER: '',
+    MINIMAX_SERVER: '',
+    MINIMAX_KEY: '',
+    RIFF_SERVER: '',
+    RIFF_KEY: ''
+}
     return v ;
 }
 const getServerInit= ():gptServerType =>{
